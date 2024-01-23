@@ -1,5 +1,5 @@
-let height = 800;
-let width = 800;
+let height = 1000;
+let width = 1000;
 
 let w = 10;
 let cols = Math.floor(width / w);
@@ -7,7 +7,7 @@ let rows = Math.floor(height / w)
 let grid = make_grid(cols, rows, 0);
 let hue = 1;
 
-let brush_size = 5;
+let brush_size = 2;
 
 function make_grid(cols, rows, defaultVal) {
   let arr = new Array(cols);
@@ -42,9 +42,11 @@ function draw_cells() {
 function step_cells() {
   // step cells
   let next = make_grid(grid.length, grid[0].length, 0);
-  for (let row = 0; row < grid.length; row++) {
-    for (let col = 0; col < grid[0].length; col++) {
 
+  // instead go from bottom up
+  for (let row = grid.length - 1; row >= 0; row--) {
+    for (let col = 0; col < grid[0].length; col++) {
+        
       let state = grid[row][col];
 
       if (state == 0) {
@@ -54,46 +56,38 @@ function step_cells() {
       if (row < grid.length - 1) {
         let state_below = grid[row + 1][col];
         if (state_below == 0) {
-          next[row + 1][col] = state;
-          next[row][col] = 0;
+          grid[row + 1][col] = state;
+          grid[row][col] = 0;
         } else {
           // check cell below to the right
           let state_below_right = -1;
           let state_below_left = -1;
+          let available = [];
           
           if (col < grid[0].length - 1) {
             state_below_right = grid[row + 1][col + 1];
+            if (state_below_right == 0) {
+              available.push([row + 1, col + 1]);
+            }
           }
           if (col > 0) {
             state_below_left = grid[row + 1][col - 1];
-          }
-
-          if (state_below_right == 0 && state_below_left == 0) {
-            let rand = Math.random();
-            if (rand < 0.5) {
-              next[row + 1][col + 1] = state;
-            } else {
-              next[row + 1][col - 1] = state;
+            if (state_below_left == 0) {
+              available.push([row + 1, col - 1]);
             }
-            next[row][col] = 0;
-          } else if (state_below_right == 0) {
-            next[row + 1][col + 1] = state;
-            next[row][col] = 0;
-          }
-          else if (state_below_left == 0) {
-            next[row + 1][col - 1] = state;
-            next[row][col] = 0;
-          } else {
-            next[row][col] = state;
           }
 
+          // choose a random available cell
+          if (available.length > 0) {
+            let rand = Math.floor(Math.random() * available.length);
+            let [r, c] = available[rand];
+            grid[r][c] = state;
+            grid[row][col] = 0;
+          }
         }
-      } else {
-        next[row][col] = state;
       }
     }
   }
-  grid = next;
 }
 
 function handle_mouse_drag() {
@@ -105,16 +99,25 @@ function handle_mouse_drag() {
       return;
     }
 
-    for (let i = 0; i < brush_size; i++) {
-      for (let j = 0; j < brush_size; j++) {
+    // use brush size as radius
+    let radius = Math.floor(brush_size / 2);
+    for (let i = -radius; i <= radius; i++) {
+      for (let j = -radius; j <= radius; j++) {
         let r = row + i;
         let c = col + j;
-        if (r < grid.length && c < grid[0].length) {
+
+        let distance = Math.sqrt(Math.pow(i, 2) + Math.pow(j, 2));
+
+        if (r < grid.length && c < grid[0].length && r >= 0 && c >= 0 && distance <= radius) {
           grid[r][c] = hue;
         }
       }
     }
-    hue += 1;
+
+    if (Math.random() < 0.5) {
+      hue += 1;
+    }
+
     if (hue > 360) {
       hue = 1;
     }
@@ -124,14 +127,6 @@ function handle_mouse_drag() {
 function setup() {
   createCanvas(width, height);
   noStroke();
-}
-
-// a custom 'sleep' or wait' function, that returns a Promise that resolves only after a timeout
-function sleep(millisecondsDuration)
-{
-  return new Promise((resolve) => {
-    setTimeout(resolve, millisecondsDuration);
-  })
 }
 
 function draw() {
