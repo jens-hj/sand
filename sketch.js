@@ -1,13 +1,13 @@
 let height = 1000;
 let width = 1000;
 
-let w = 10;
+let w = 5;
 let cols = Math.floor(width / w);
 let rows = Math.floor(height / w)
 let grid = make_grid(cols, rows, 0);
 let hue = 1;
 
-let brush_size = 2;
+let brush_size = 50;
 
 function make_grid(cols, rows, defaultVal) {
   let arr = new Array(cols);
@@ -108,7 +108,11 @@ function handle_mouse_drag() {
 
         let distance = Math.sqrt(Math.pow(i, 2) + Math.pow(j, 2));
 
-        if (r < grid.length && c < grid[0].length && r >= 0 && c >= 0 && distance <= radius) {
+        if (r < grid.length &&
+            c < grid[0].length &&
+            r >= 0 && c >= 0 &&
+            distance <= radius &&
+            grid[r][c] == 0) {
           grid[r][c] = hue;
         }
       }
