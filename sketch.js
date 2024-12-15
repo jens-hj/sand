@@ -1,5 +1,5 @@
-let height = 1000;
-let width = 1000;
+let height = 500;
+let width = 500;
 
 let w = 5;
 let cols = Math.floor(width / w);
@@ -7,7 +7,7 @@ let rows = Math.floor(height / w)
 let grid = make_grid(cols, rows, 0);
 let hue = 1;
 
-let brush_size = 50;
+let brush_size = 10;
 
 function make_grid(cols, rows, defaultVal) {
   let arr = new Array(cols);
