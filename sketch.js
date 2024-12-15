@@ -7,7 +7,7 @@ let rows = Math.floor(height / w)
 let grid = make_grid(cols, rows, 0);
 let hue = 1;
 
-let brush_size = 10;
+let brush_size = 5;
 
 function make_grid(cols, rows, defaultVal) {
   let arr = new Array(cols);
@@ -46,7 +46,7 @@ function step_cells() {
   // instead go from bottom up
   for (let row = grid.length - 1; row >= 0; row--) {
     for (let col = 0; col < grid[0].length; col++) {
-        
+
       let state = grid[row][col];
 
       if (state == 0) {
@@ -63,7 +63,7 @@ function step_cells() {
           let state_below_right = -1;
           let state_below_left = -1;
           let available = [];
-          
+
           if (col < grid[0].length - 1) {
             state_below_right = grid[row + 1][col + 1];
             if (state_below_right == 0) {
@@ -95,7 +95,7 @@ function handle_mouse_drag() {
     let row = Math.floor(mouseY / w);
     let col = Math.floor(mouseX / w);
 
-    if (row > grid.length -1 || col > grid[0].length -1 || row < 0 || col < 0) {
+    if (row > grid.length - 1 || col > grid[0].length - 1 || row < 0 || col < 0) {
       return;
     }
 
@@ -109,10 +109,10 @@ function handle_mouse_drag() {
         let distance = Math.sqrt(Math.pow(i, 2) + Math.pow(j, 2));
 
         if (r < grid.length &&
-            c < grid[0].length &&
-            r >= 0 && c >= 0 &&
-            distance <= radius &&
-            grid[r][c] == 0) {
+          c < grid[0].length &&
+          r >= 0 && c >= 0 &&
+          distance <= radius &&
+          grid[r][c] == 0) {
           grid[r][c] = hue;
         }
       }
@@ -134,7 +134,8 @@ function setup() {
 }
 
 function draw() {
-  background('#eff1f5');
+  // background('#eff1f5');
+  background('#303446');
   handle_mouse_drag();
   step_cells();
   draw_cells();
